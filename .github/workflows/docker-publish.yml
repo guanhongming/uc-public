@@ -1,4 +1,4 @@
-name: Build and Push Service
+name: GHCR
 
 on:
   push:
@@ -10,24 +10,25 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
-
+      packages: write 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: QEMU
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
-      - name: Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in
+      - name: Log in to the GitHub Container Registry
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       
+
       - name: App image
         id: build-app
         uses: docker/build-push-action@v4
@@ -35,7 +36,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: hocken123/app-uc:latest
+          tags: ghcr.io/guanhongming/app-uc:latest 
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -46,6 +47,6 @@ jobs:
           context: .
           file: ./Dockerfile.nginx
           push: true
-          tags: hocken123/nginx-uc:latest 
+          tags: ghcr.io/guanhongming/nginx-uc:latest 
           cache-from: type=gha
           cache-to: type=gha,mode=max
