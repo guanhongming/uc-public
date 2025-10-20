@@ -2,18 +2,18 @@ version: '3.8'
 
 services:
   app:
-    image: hocken123/app-uc:latest 
+    image: ghcr.io/guanhongming/app-uc:latest 
     container_name: app
     restart: unless-stopped
     networks:
       - app-network
     volumes:
-      - ./app-code:/var/www/html 
+      - ./app-code:/var/www/html
     env_file:
       - .env
-      
+
   webserver:
-    image: hocken123/nginx-uc:latest
+    image: ghcr.io/guanhongming/nginx-uc:latest 
     container_name: webserver
     restart: unless-stopped
     ports:
@@ -21,8 +21,7 @@ services:
     networks:
       - app-network
     volumes:
-      - ./app-code:/var/www/html:ro 
-
+      - ./app-code:/var/www/html:ro
   db:
     image: mysql:8.0
     container_name: db
@@ -35,7 +34,7 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - db-data:/var/lib/mysql # Persistent data volume
+      - db-data:/var/lib/mysql
 
 networks:
   app-network:
