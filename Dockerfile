@@ -1,48 +1,42 @@
-# Use an official PHP-FPM image as the base. Alpine is lightweight.
-FROM php:8.2-fpm-alpine
+FROM php:8.2-fpm-alpine AS builder
 
-# Set the working directory inside the container
 WORKDIR /var/www/html
 
-# Install system dependencies required by Laravel and Vue
-# - PHP extensions for database, XML, etc.
-# - Node.js, npm for building frontend assets
-# - Git, unzip for Composer
 RUN apk add --no-cache \
-    git \
-    curl \
-    unzip \
-    libzip-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    oniguruma-dev \
-    libxml2-dev \
-    nodejs \
-    npm
+    git curl unzip libzip-dev oniguruma-dev libxml2-dev \
+    libpng-dev libjpeg-turbo-dev freetype-dev \
+    nodejs npm
 
-# Install PHP extensions using docker-php-ext-install helper
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Get the latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy existing application source code to the container
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader
+
+COPY package.json package-lock.json ./
+RUN npm install
 COPY . .
 
-# Install Composer dependencies
-# This is run here to cache the vendor directory if composer.json doesn't change
-RUN composer install --optimize-autoloader 
-# Install NPM dependencies and build the frontend for production
-RUN npm install
+RUN composer install --optimize-autoloader --no-dev
+
 RUN npm run build
 
-# Set correct permissions for storage and cache so the web server can write to them
-# The 'www-data' user is the default user for php-fpm
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN php artisan config:cache
+RUN php artisan route:cache
 
-# Expose port 9000 to listen for PHP-FPM requests
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+FROM php:8.2-fpm-alpine
+
+WORKDIR /var/www/html
+
+RUN apk add --no-cache libzip libpng libjpeg-turbo freetype oniguruma libxml2
+
+RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
+
+COPY --from=builder /var/www/html/. .
+
 EXPOSE 9000
 
-# The command to run when the container starts
 CMD ["php-fpm"]
