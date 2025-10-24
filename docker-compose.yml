@@ -36,6 +36,15 @@ services:
     volumes:
       - db-data:/var/lib/mysql
 
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 100
+
+
 networks:
   app-network:
     driver: bridge
