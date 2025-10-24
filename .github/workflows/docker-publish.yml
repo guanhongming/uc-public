@@ -36,7 +36,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/guanhongming/uc-public:latest 
+          tags: ghcr.io/guanhongming/uc-public:app 
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -47,6 +47,6 @@ jobs:
           context: .
           file: ./Dockerfile.nginx
           push: true
-          tags: ghcr.io/guanhongming/nginx-uc:latest 
+          tags: ghcr.io/guanhongming/uc-public:web 
           cache-from: type=gha
           cache-to: type=gha,mode=max
