@@ -30,7 +30,15 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 FROM php:8.2-fpm-alpine
 
 WORKDIR /var/www/html
-
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip \
+    && apk del .build-deps
 RUN apk add --no-cache libzip libpng libjpeg-turbo freetype oniguruma libxml2
 
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
