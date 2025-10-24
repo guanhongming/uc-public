@@ -53,9 +53,6 @@ RUN set -eux; \
     apk del .build-deps
 
 RUN apk add --no-cache libzip libpng libjpeg-turbo freetype oniguruma libxml2
-
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
-
 COPY --from=builder /var/www/html/. .
 
 EXPOSE 9000
