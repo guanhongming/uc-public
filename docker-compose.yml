@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: ghcr.io/guanhongming/app-uc:latest 
+    image: ghcr.io/guanhongming/uc-public:app
     container_name: app
     restart: unless-stopped
     networks:
@@ -13,7 +13,7 @@ services:
       - .env
 
   webserver:
-    image: ghcr.io/guanhongming/nginx-uc:latest 
+    image: ghcr.io/guanhongming/uc-public:web 
     container_name: webserver
     restart: unless-stopped
     ports:
