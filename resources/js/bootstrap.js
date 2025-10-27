@@ -4,4 +4,4 @@ window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 window.axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://192.168.0.64';
+axios.defaults.baseURL = import.meta.env.VITE_APP_URL;
