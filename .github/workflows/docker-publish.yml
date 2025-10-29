@@ -21,7 +21,7 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/public-main" ]]; then
             echo "TAG_SUFFIX=main" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
             echo "TAG_SUFFIX=develop" >> $GITHUB_ENV
           fi
 
