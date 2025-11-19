@@ -21,8 +21,10 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/public-main" ]]; then
             echo "TAG_SUFFIX=main" >> $GITHUB_ENV
+            echo "APP_BASE_URL=/" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
             echo "TAG_SUFFIX=develop" >> $GITHUB_ENV
+            echo "APP_BASE_URL=/staging/" >> $GITHUB_ENV
           fi
 
       - name: Log in to the GitHub Container Registry
@@ -42,6 +44,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ghcr.io/guanhongming/uc-public:app-${{ env.TAG_SUFFIX }}
+          build-args: |
+            VITE_APP_BASE_URL=${{ env.APP_BASE_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
