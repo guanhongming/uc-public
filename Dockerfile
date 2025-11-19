@@ -20,10 +20,13 @@ COPY . .
 
 RUN composer install --optimize-autoloader --no-dev
 
+ARG VITE_APP_BASE_URL
+ENV VITE_APP_BASE_URL=$VITE_APP_BASE_URL
+
 RUN npm run build
 
-RUN php artisan config:cache
-RUN php artisan route:cache
+#RUN php artisan config:cache
+#RUN php artisan route:cache
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 
