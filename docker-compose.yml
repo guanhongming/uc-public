@@ -8,7 +8,7 @@ services:
     networks:
       - proxy-net
     volumes:
-      - ./app-code:/var/www/html
+      - ./:/var/www/html
     env_file:
       - .env
 
@@ -19,7 +19,7 @@ services:
     networks:
       - proxy-net
     volumes:
-      - ./app-code:/var/www/html:ro
+      - ./:/var/www/html:ro
 
   db:
     image: mysql:8.0
