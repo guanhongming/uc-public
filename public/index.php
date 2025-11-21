@@ -1,5 +1,9 @@
 <?php
-
+if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/staging') === 0) {
+    $_ENV['APP_URL'] = 'http://192.168.0.64/staging';
+    $_ENV['ASSET_URL'] = 'http://192.168.0.64/staging';
+    define('ASSET_URL', 'http://192.168.0.64/staging');
+}
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 

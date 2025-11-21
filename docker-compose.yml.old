@@ -8,7 +8,7 @@ services:
     # CHANGE 1: REMOVE proxy-net. 
     # By removing the networks block entirely, it joins the 'default' private network.
     volumes:
-       - ./:/var/www/html
+      - site-roots:/var/www/html
     env_file:
       - .env
 
@@ -21,7 +21,7 @@ services:
       - proxy-net  # To talk to the Internet/Reverse Proxy
       - default    # To talk to the App (Private)
     volumes:
-       - ./:/var/www/html
+      - site-roots:/var/www/html:ro
 
   db:
     image: mysql:8.0
