@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  app:
+    image: ghcr.io/guanhongming/uc-public:${IMAGE_TAG_APP:-app}
+    container_name: ${COMPOSE_PROJECT_NAME}_app
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    volumes:
+      - site-roots:/var/www/html
+#     - ./app-code:/var/www/html
+    env_file:
+      - .env
+
+  webserver:
+    image: ghcr.io/guanhongming/uc-public:${IMAGE_TAG_WEB:-web} 
+    container_name: ${COMPOSE_PROJECT_NAME}_webserver
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    volumes:
+      - site-roots:/var/www/html:ro
+#      - ./app-code:/var/www/html:ro
+
+  db:
+    image: mysql:8.0
+    container_name: ${COMPOSE_PROJECT_NAME}_db
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: ${COMPOSE_PROJECT_NAME}_watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    command: --cleanup --interval 100 ${COMPOSE_PROJECT_NAME}_app ${COMPOSE_PROJECT_NAME}_webserver
+
+networks:
+  proxy-net:
+    external: true
+
+volumes:
+  db-data:
+    driver: local
+  site-roots:
+    driver: local
